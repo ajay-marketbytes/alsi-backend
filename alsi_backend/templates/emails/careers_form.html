@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Poppins, sans-serif;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            background-color: #ffffff;
+            max-width: 600px;
+            margin: 10px auto;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .email-header {
+            background-color: #182d70;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .email-header h2 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 800;
+        }
+        .email-content {
+            font-size: 14px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+            font-size: 14px;
+            font-weight: 600;
+            color: #182d70;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <h2>ALSI Global LLC Careers Form Submission</h2>
+        </div>
+        <div class="email-content">
+            <table>
+                <tr>
+                    <th>Field</th>
+                    <th>Details</th>
+                </tr>
+                <tr>
+                    <td>Name</td>
+                    <td>{{ name }}</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>{{ email }}</td>
+                </tr>
+                <tr>
+                    <td>Phone</td>
+                    <td>{{ phone }}</td>
+                </tr>
+                <tr>
+                    <td>Message</td>
+                    <td>{{ message }}</td>
+                </tr>
+                <tr>
+                    <td>Referer URL</td>
+                    <td>{{ referer_url }}</td>
+                </tr>
+                <tr>
+                    <td>Submitted URL</td>
+                    <td>{{ submitted_url }}</td>
+                </tr>
+                {% if file %}
+                <tr>
+                    <td>Uploaded File:</td>
+                    <td><a href="{{ file.url }}" target="_blank" class="button">View File</a></td>
+                </tr>
+                {% else %}
+                <tr>No file uploaded.</tr>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+</body>
+</html>
