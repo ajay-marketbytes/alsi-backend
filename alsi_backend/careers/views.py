@@ -59,7 +59,7 @@ class CareersFormViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(data=data)
             if serializer.is_valid():
                 career = serializer.save(file=request.FILES['file'])
-                # Send emails asynchronously if possible in production
+                # Send emails
                 self._send_confirmation_email(career)
                 self._send_email_notification(career, request.FILES['file'])
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -112,7 +112,7 @@ class CareersFormViewSet(viewsets.ModelViewSet):
             logger.warning(f"Failed to send confirmation email: {str(e)}")
 
     def _send_email_notification(self, career, file):
-        """Send notification email to the team with file attachment"""
+        """Send notification email to the client with file attachment"""
         try:
             subject = f"New Career Form Submission from {career.name}"
             message = (
@@ -129,7 +129,7 @@ class CareersFormViewSet(viewsets.ModelViewSet):
                 subject=subject,
                 body=message,
                 from_email=settings.EMAIL_HOST_USER,
-                to=[settings.EMAIL_HOST_USER],  # Sends to marketbytesdevops@gmail.com
+                to=[settings.CLIENT_EMAIL],  # Changed to CLIENT_EMAIL
             )
             if file:
                 file.seek(0)  # Reset file pointer
