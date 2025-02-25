@@ -9,4 +9,4 @@ class ContactBannerSerializer(serializers.ModelSerializer):
 class ContactFormSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactForm
-        fields = ['id', 'name', 'email', 'phone', 'message', 'referer_url', 'submitted_url']
+        fields = ['id', 'name', 'email', 'phone', 'message', 'referer_url', 'submitted_url', 'submitted_at']

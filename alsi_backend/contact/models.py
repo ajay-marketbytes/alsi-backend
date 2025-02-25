@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 class ContactBanner(models.Model):
     title = models.CharField(max_length=255)
@@ -14,6 +15,7 @@ class ContactForm(models.Model):
     message = models.TextField()
     referer_url = models.URLField(max_length=500, null=True, blank=True)
     submitted_url = models.URLField(max_length=500, null=True, blank=True)
+    submitted_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.name} ({self.email})"
