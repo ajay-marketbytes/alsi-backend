@@ -15,8 +15,14 @@ from pathlib import Path
 from datetime import timedelta
 from decouple import config
 
+
+from dotenv import load_dotenv
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -140,20 +146,31 @@ WSGI_APPLICATION = 'alsi_backend.wsgi.application'
 #     }
 # }
 
+# Database settings
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('DB_NAME'),  
-        'USER': config('DB_USER'),  
-        'PASSWORD': config('DB_PASSWORD'),  
-        'HOST': config('DB_HOST', default='127.0.0.1'),  
-        'PORT': config('DB_PORT', default='3306'),  
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST', default='127.0.0.1'),
+        'PORT': config('DB_PORT', default='3306'),
         'OPTIONS': {
-            'sql_mode': 'STRICT_TRANS_TABLES',  
+            'sql_mode': 'STRICT_TRANS_TABLES',
         },
     }
 }
 
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')
+CLIENT_EMAIL = config('CLIENT_EMAIL')
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -199,14 +216,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'authapp.CustomUser'
 
-# Email Settings
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-
-CONTACT_EMAIL_HOST_USER = config('CONTACT_EMAIL_HOST_USER')
-CONTACT_EMAIL_HOST_PASSWORD = config('CONTACT_EMAIL_HOST_PASSWORD')
-
-CAREERS_EMAIL_HOST_USER = config('CAREERS_EMAIL_HOST_USER')
-CAREERS_EMAIL_HOST_PASSWORD = config('CAREERS_EMAIL_HOST_PASSWORD')

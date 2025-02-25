@@ -58,8 +58,8 @@ class ContactFormViewSet(viewsets.ModelViewSet):
         send_mail(
             subject,
             message,
-            settings.CONTACT_EMAIL_HOST_USER,
-            [contact.email],  # Send to the user's email address
+            settings.EMAIL_HOST_USER,
+            [contact.email],
         )
 
     def _send_email_notification(self, contact):
@@ -80,8 +80,8 @@ class ContactFormViewSet(viewsets.ModelViewSet):
         send_mail(
             subject,
             message,
-            settings.CONTACT_EMAIL_HOST_USER,
-            [settings.CLIENT_EMAIL],  # Send to the client's email address
+            settings.EMAIL_HOST_USER,
+            [settings.CLIENT_EMAIL],
         )
 
     @action(detail=False, methods=['delete'])
