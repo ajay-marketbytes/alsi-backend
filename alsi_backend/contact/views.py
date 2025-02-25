@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.core.mail import send_mail
 from django.conf import settings
-from django.template.loader import render_to_string
 from .models import ContactBanner, ContactForm
 from .serializers import ContactBannerSerializer, ContactFormSerializer
 import logging
@@ -32,6 +31,9 @@ class ContactFormViewSet(viewsets.ModelViewSet):
         contact = serializer.save()
 
         try:
+            # Send confirmation email to the user
+            self._send_confirmation_email(contact)
+            # Send notification email to the client or admin
             self._send_email_notification(contact)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as e:
@@ -39,25 +41,47 @@ class ContactFormViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Form submitted, but email notification failed.'},
                             status=status.HTTP_201_CREATED)
 
-    def _send_email_notification(self, contact):
-        subject = f"New Contact Form Submission from {contact.name}"
-        context = {
-            'name': contact.name,
-            'email': contact.email,
-            'phone': contact.phone,
-            'message': contact.message,
-            'referer_url': contact.referer_url,
-            'submitted_url': contact.submitted_url
-        }
-        html_message = render_to_string('emails/contact_form.html', context)
-        plain_message = render_to_string('emails/contact_form.txt', context)
+    def _send_confirmation_email(self, contact):
+        subject = "Your Form Submission was Successful"
+        message = (
+            f"Hello {contact.name},\n\n"
+            f"Thank you for contacting us. Your form has been successfully submitted.\n"
+            f"Our team will review your submission and get back to you soon.\n\n"
+            f"Here are the details of your submission:\n"
+            f"Name: {contact.name}\n"
+            f"Email: {contact.email}\n"
+            f"Phone: {contact.phone}\n"
+            f"Message: {contact.message}\n\n"
+            f"Thank you for your patience!"
+        )
 
         send_mail(
             subject,
-            plain_message,
+            message,
             settings.CONTACT_EMAIL_HOST_USER,
-            [settings.CONTACT_EMAIL_HOST_USER],
-            html_message=html_message,
+            [contact.email],  # Send to the user's email address
+        )
+
+    def _send_email_notification(self, contact):
+        subject = f"New Contact Form Submission from {contact.name}"
+        message = (
+            f"Hello,\n\n"
+            f"A new contact form has been submitted.\n\n"
+            f"Here are the details:\n"
+            f"Name: {contact.name}\n"
+            f"Email: {contact.email}\n"
+            f"Phone: {contact.phone}\n"
+            f"Message: {contact.message}\n"
+            f"Referer URL: {contact.referer_url}\n"
+            f"Submitted URL: {contact.submitted_url}\n\n"
+            f"Please review and take necessary action."
+        )
+
+        send_mail(
+            subject,
+            message,
+            settings.CONTACT_EMAIL_HOST_USER,
+            [settings.CLIENT_EMAIL],  # Send to the client's email address
         )
 
     @action(detail=False, methods=['delete'])
