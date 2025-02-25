@@ -55,10 +55,13 @@ class CareersFormViewSet(viewsets.ModelViewSet):
 
             serializer = self.get_serializer(data=data)
             if serializer.is_valid():
+                logger.info("Serializer is valid, saving career form")
                 career = serializer.save(file=request.FILES['file'])
+                logger.info("Career form saved, sending emails")
                 self._send_confirmation_email(career)
                 self._send_email_notification(career, request.FILES['file'])
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
+            logger.error(f"Serializer errors: {serializer.errors}")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logger.error(f"Error creating career form: {str(e)}", exc_info=True)
@@ -101,9 +104,11 @@ class CareersFormViewSet(viewsets.ModelViewSet):
                 from_email=settings.EMAIL_HOST_USER,
                 to=[career.email],
             )
-            email.send(fail_silently=True)
+            logger.info(f"Sending confirmation email to {career.email}")
+            email.send(fail_silently=False)  # Changed to False for debugging
+            logger.info("Confirmation email sent successfully")
         except Exception as e:
-            logger.warning(f"Failed to send confirmation email: {str(e)}")
+            logger.error(f"Failed to send confirmation email: {str(e)}", exc_info=True)
 
     def _send_email_notification(self, career, file):
         try:
@@ -118,15 +123,23 @@ class CareersFormViewSet(viewsets.ModelViewSet):
                 f"Submitted URL: {career.submitted_url}\n"
                 f"File: See attached file or download from {career.file.url}\n"
             )
+            recipients = [
+                'marketbytesdevops@gmail.com',
+                'ajay@marketbytes.in',
+                'ajayrenjith03@gmail.com',
+                'silviathomas2000@gmail.com'
+            ]
             email = EmailMessage(
                 subject=subject,
                 body=message,
                 from_email=settings.EMAIL_HOST_USER,
-                to=[settings.CLIENT_EMAIL],
+                to=recipients,
             )
             if file:
                 file.seek(0)
                 email.attach(file.name, file.read(), file.content_type)
-            email.send(fail_silently=True)
+            logger.info(f"Sending notification email to {recipients}")
+            email.send(fail_silently=False)
+            logger.info("Notification email sent successfully")
         except Exception as e:
-            logger.warning(f"Failed to send notification email: {str(e)}")
+            logger.error(f"Failed to send notification email: {str(e)}", exc_info=True)
