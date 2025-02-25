@@ -20,7 +20,6 @@ class CareersFormViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
 
     def list(self, request, *args, **kwargs):
-        """Get all career form submissions"""
         try:
             queryset = self.get_queryset()
             serializer = self.get_serializer(queryset, many=True)
@@ -32,7 +31,6 @@ class CareersFormViewSet(viewsets.ModelViewSet):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def retrieve(self, request, pk=None, *args, **kwargs):
-        """Get a specific career form by ID"""
         try:
             career_form = self.get_object()
             serializer = self.get_serializer(career_form)
@@ -46,7 +44,6 @@ class CareersFormViewSet(viewsets.ModelViewSet):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def create(self, request, *args, **kwargs):
-        """Create a new career form submission"""
         try:
             referer_url = request.META.get('HTTP_REFERER', '')
             submitted_url = request.build_absolute_uri()
@@ -59,7 +56,6 @@ class CareersFormViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(data=data)
             if serializer.is_valid():
                 career = serializer.save(file=request.FILES['file'])
-                # Send emails
                 self._send_confirmation_email(career)
                 self._send_email_notification(career, request.FILES['file'])
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -71,7 +67,6 @@ class CareersFormViewSet(viewsets.ModelViewSet):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def destroy(self, request, pk=None, *args, **kwargs):
-        """Delete a specific career form by ID"""
         try:
             career_form = self.get_object()
             career_name = career_form.name
@@ -88,7 +83,6 @@ class CareersFormViewSet(viewsets.ModelViewSet):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def _send_confirmation_email(self, career):
-        """Send confirmation email to the submitter"""
         try:
             subject = "Your Career Form Submission was Successful"
             message = (
@@ -112,7 +106,6 @@ class CareersFormViewSet(viewsets.ModelViewSet):
             logger.warning(f"Failed to send confirmation email: {str(e)}")
 
     def _send_email_notification(self, career, file):
-        """Send notification email to the client with file attachment"""
         try:
             subject = f"New Career Form Submission from {career.name}"
             message = (
@@ -129,10 +122,10 @@ class CareersFormViewSet(viewsets.ModelViewSet):
                 subject=subject,
                 body=message,
                 from_email=settings.EMAIL_HOST_USER,
-                to=[settings.CLIENT_EMAIL],  # Changed to CLIENT_EMAIL
+                to=[settings.CLIENT_EMAIL],
             )
             if file:
-                file.seek(0)  # Reset file pointer
+                file.seek(0)
                 email.attach(file.name, file.read(), file.content_type)
             email.send(fail_silently=True)
         except Exception as e:

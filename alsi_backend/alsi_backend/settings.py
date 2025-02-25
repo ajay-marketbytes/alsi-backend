@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'gallery',
     'django_filters',
     'our_network',
+    'django_recaptcha',
 ]
 
 MIDDLEWARE = [
@@ -160,6 +161,10 @@ DATABASES = {
         },
     }
 }
+
+RECAPTCHA_PUBLIC_KEY = config('RECAPTCHA_PUBLIC_KEY')
+RECAPTCHA_PRIVATE_KEY = config('RECAPTCHA_PRIVATE_KEY')
+
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
