@@ -12,4 +12,4 @@ class CareersFormSerializer(serializers.ModelSerializer):
     captcha = ReCaptchaField()
     class Meta:
         model = CareersForm
-        fields = ['id', 'name', 'email', 'phone', 'message', 'referer_url', 'submitted_url', 'file']
+        fields = ['id', 'name', 'email', 'phone', 'message', 'referer_url', 'submitted_url','submitted_at', 'file']

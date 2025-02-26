@@ -9,8 +9,7 @@ class CareersFormAdmin(admin.ModelAdmin):
     list_display = ('name', 'email', 'phone', 'submitted_at')
     search_fields = ('name', 'email', 'phone')
     list_filter = ('submitted_at',)
-    readonly_fields = ('submitted_at',)
-
+    readonly_fields = ('submitted_at',)  
     fieldsets = (
         (None, {
             'fields': ('name', 'email', 'phone', 'message', 'referer_url', 'submitted_url', 'file')
