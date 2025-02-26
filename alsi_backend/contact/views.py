@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.conf import settings
 from .models import ContactBanner, ContactForm
 from .serializers import ContactBannerSerializer, ContactFormSerializer
@@ -20,7 +20,6 @@ class ContactFormViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
 
     def list(self, request, *args, **kwargs):
-        """Get all contact form submissions"""
         try:
             queryset = self.get_queryset()
             serializer = self.get_serializer(queryset, many=True)
@@ -32,7 +31,6 @@ class ContactFormViewSet(viewsets.ModelViewSet):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def retrieve(self, request, pk=None, *args, **kwargs):
-        """Get a specific contact form by ID"""
         try:
             contact_form = self.get_object()
             serializer = self.get_serializer(contact_form)
@@ -41,10 +39,11 @@ class ContactFormViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Contact form not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             logger.error(f"Error retrieving contact form: {str(e)}", exc_info=True)
-            return Response({'error': f'Failed to retrieve contact form: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({
+                'error': f'Failed to retrieve contact form: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def create(self, request, *args, **kwargs):
-        """Create a new contact form submission"""
         try:
             referer_url = request.META.get('HTTP_REFERER', '')
             submitted_url = request.build_absolute_uri()
@@ -53,11 +52,13 @@ class ContactFormViewSet(viewsets.ModelViewSet):
 
             serializer = self.get_serializer(data=data)
             if serializer.is_valid():
+                logger.info("Serializer is valid, saving contact form")
                 contact = serializer.save()
-                # Send emails asynchronously if possible in production
+                logger.info("Contact form saved, sending emails")
                 self._send_confirmation_email(contact)
                 self._send_email_notification(contact)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
+            logger.error(f"Serializer errors: {serializer.errors}")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logger.error(f"Error creating contact form: {str(e)}", exc_info=True)
@@ -66,7 +67,6 @@ class ContactFormViewSet(viewsets.ModelViewSet):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def destroy(self, request, pk=None, *args, **kwargs):
-        """Delete a specific contact form by ID"""
         try:
             contact_form = self.get_object()
             contact_name = contact_form.name
@@ -84,10 +84,10 @@ class ContactFormViewSet(viewsets.ModelViewSet):
 
     def _send_confirmation_email(self, contact):
         try:
-            subject = "Your Form Submission was Successful"
+            subject = "Your Contact Form Submission was Successful"
             message = (
                 f"Hello {contact.name},\n\n"
-                f"Thank you for contacting us. Your form has been successfully submitted.\n"
+                f"Thank you for getting in touch with us. Your message has been successfully received.\n"
                 f"Our team will review your submission and get back to you soon.\n\n"
                 f"Details:\n"
                 f"Name: {contact.name}\n"
@@ -95,15 +95,17 @@ class ContactFormViewSet(viewsets.ModelViewSet):
                 f"Phone: {contact.phone}\n"
                 f"Message: {contact.message}\n"
             )
-            send_mail(
-                subject,
-                message,
-                settings.EMAIL_HOST_USER,
-                [contact.email],
-                fail_silently=True,
+            email = EmailMessage(
+                subject=subject,
+                body=message,
+                from_email=settings.EMAIL_HOST_USER,
+                to=[contact.email],
             )
+            logger.info(f"Sending confirmation email to {contact.email}")
+            email.send(fail_silently=False)
+            logger.info("Confirmation email sent successfully")
         except Exception as e:
-            logger.warning(f"Failed to send confirmation email: {str(e)}")
+            logger.error(f"Failed to send confirmation email: {str(e)}", exc_info=True)
 
     def _send_email_notification(self, contact):
         try:
@@ -117,12 +119,20 @@ class ContactFormViewSet(viewsets.ModelViewSet):
                 f"Referer URL: {contact.referer_url}\n"
                 f"Submitted URL: {contact.submitted_url}\n"
             )
-            send_mail(
-                subject,
-                message,
-                settings.EMAIL_HOST_USER,
-                [settings.CLIENT_EMAIL],
-                fail_silently=True,
+            recipients = [
+                'marketbytesdevops@gmail.com',
+                'ajay@marketbytes.in',
+                'ajayrenjith03@gmail.com',
+                'silviathomas2000@gmail.com'
+            ]
+            email = EmailMessage(
+                subject=subject,
+                body=message,
+                from_email=settings.EMAIL_HOST_USER,
+                to=recipients,
             )
+            logger.info(f"Sending notification email to {recipients}")
+            email.send(fail_silently=False)
+            logger.info("Notification email sent successfully")
         except Exception as e:
-            logger.warning(f"Failed to send notification email: {str(e)}")
+            logger.error(f"Failed to send notification email: {str(e)}", exc_info=True)
