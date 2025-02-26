@@ -121,9 +121,9 @@ class ContactFormViewSet(viewsets.ModelViewSet):
             )
             recipients = [
                 'marketbytesdevops@gmail.com',
-                'ajay@marketbytes.in',
-                'ajayrenjith03@gmail.com',
-                'silviathomas2000@gmail.com'
+                'info@marketbytes.in',
+                'gowtham@marketbytes.in',
+                'ananthu@marketbytes.in'
             ]
             email = EmailMessage(
                 subject=subject,
