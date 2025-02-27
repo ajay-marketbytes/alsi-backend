@@ -105,7 +105,7 @@ class CareersFormViewSet(viewsets.ModelViewSet):
                 to=[career.email],
             )
             logger.info(f"Sending confirmation email to {career.email}")
-            email.send(fail_silently=False)  # Changed to False for debugging
+            email.send(fail_silently=False)
             logger.info("Confirmation email sent successfully")
         except Exception as e:
             logger.error(f"Failed to send confirmation email: {str(e)}", exc_info=True)
@@ -128,13 +128,6 @@ class CareersFormViewSet(viewsets.ModelViewSet):
                 'ajay@marketbytes.in',
                 'silviathomas2000@gmail.com'
             ]
-
-            # recipients = [
-            #     'alsiglobalofficial@gmail.com',
-            #     'info@marketbytes.in',
-            #     'gowtham@marketbytes.in',
-            #     'ananthu@marketbytes.in'
-            # ]
 
             email = EmailMessage(
                 subject=subject,
