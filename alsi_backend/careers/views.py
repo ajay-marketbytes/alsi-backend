@@ -46,7 +46,7 @@ class CareersFormViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         try:
             referer_url = request.META.get('HTTP_REFERER', '')
-            submitted_url = request.build_absolute_uri()
+            submitted_url = "https://alsiglobal.com/careers/"
             data = request.data.copy()
             data.update({'referer_url': referer_url, 'submitted_url': submitted_url})
 
