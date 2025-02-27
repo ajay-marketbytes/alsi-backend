@@ -3,9 +3,10 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.core.mail import EmailMessage
 from django.conf import settings
-from .models import CareersBanner, CareersForm
-from .serializers import CareersBannerSerializer, CareersFormSerializer
+import requests
 import logging
+from models import CareersBanner,CareersForm
+from serializers import CareersFormSerializer,CareersBannerSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -45,10 +46,29 @@ class CareersFormViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         try:
-            referer_url = request.META.get('HTTP_REFERER', '')
+            # Extract reCAPTCHA token
+            recaptcha_token = request.data.get("recaptcha_token")
+            if not recaptcha_token:
+                return Response({"error": "reCAPTCHA token missing"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Verify reCAPTCHA v3 with Google
+            recaptcha_response = requests.post(
+                "https://www.google.com/recaptcha/api/siteverify",
+                data={
+                    "secret": settings.RECAPTCHA_PRIVATE_KEY,
+                    "response": recaptcha_token,
+                },
+            ).json()
+
+            if not recaptcha_response.get("success") or recaptcha_response.get("score", 0) < 0.5:
+                logger.warning(f"reCAPTCHA verification failed: {recaptcha_response}")
+                return Response({"error": "reCAPTCHA verification failed"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Proceed with form data
+            referer_url = request.META.get("HTTP_REFERER", "")
             submitted_url = "https://alsiglobal.com/careers/"
             data = request.data.copy()
-            data.update({'referer_url': referer_url, 'submitted_url': submitted_url})
+            data.update({"referer_url": referer_url, "submitted_url": submitted_url})
 
             if 'file' not in request.FILES:
                 return Response({'error': 'File is required'}, status=status.HTTP_400_BAD_REQUEST)
@@ -123,12 +143,8 @@ class CareersFormViewSet(viewsets.ModelViewSet):
                 f"Submitted URL: {career.submitted_url}\n"
                 f"File: See attached file or download from {career.file.url}\n"
             )
-            recipients = [
-                'alsiglobalofficial@gmail.com',
-                
-                
-            ]
-            bcc_list = ['ajay@marketbytes.in','silviathomas2000@gmail.com']
+            recipients = ["alsiglobalofficial@gmail.com"]
+            bcc_list = ["ajay@marketbytes.in", "silviathomas2000@gmail.com"]
 
             email = EmailMessage(
                 subject=subject,
