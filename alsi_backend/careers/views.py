@@ -124,11 +124,18 @@ class CareersFormViewSet(viewsets.ModelViewSet):
                 f"File: See attached file or download from {career.file.url}\n"
             )
             recipients = [
-                'marketbytesdevops@gmail.com',
-                'info@marketbytes.in',
-                'gowtham@marketbytes.in',
-                'ananthu@marketbytes.in'
+                'alsiglobalofficial@gmail.com',
+                'ajay@marketbytes.in',
+                'silviathomas2000@gmail.com'
             ]
+
+            # recipients = [
+            #     'alsiglobalofficial@gmail.com',
+            #     'info@marketbytes.in',
+            #     'gowtham@marketbytes.in',
+            #     'ananthu@marketbytes.in'
+            # ]
+
             email = EmailMessage(
                 subject=subject,
                 body=message,
