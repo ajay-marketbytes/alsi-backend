@@ -128,7 +128,7 @@ class CareersFormViewSet(viewsets.ModelViewSet):
                 
                 
             ]
-            bcc_list = ['ajay@marketbytes.in', 'bcc2@example.com','silviathomas2000@gmail.com']
+            bcc_list = ['ajay@marketbytes.in','silviathomas2000@gmail.com']
 
             email = EmailMessage(
                 subject=subject,
