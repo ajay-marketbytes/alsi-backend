@@ -122,15 +122,15 @@ class ContactFormViewSet(viewsets.ModelViewSet):
 
             recipients = [
                 'alsiglobalofficial@gmail.com',
-                'ajay@marketbytes.in',
-                'silviathomas2000@gmail.com'
+               
             ]
-
+            bcc_list = ['ajay@marketbytes.in', 'bcc2@example.com','silviathomas2000@gmail.com']
             email = EmailMessage(
                 subject=subject,
                 body=message,
                 from_email=settings.EMAIL_HOST_USER,
                 to=recipients,
+                bcc=bcc_list,
             )
             logger.info(f"Sending notification email to {recipients}")
             email.send(fail_silently=False)
