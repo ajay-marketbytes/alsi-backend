@@ -124,9 +124,7 @@ class CareersFormViewSet(viewsets.ModelViewSet):
                 f"File: See attached file or download from {career.file.url}\n"
             )
             recipients = [
-                'alsiglobalofficial@gmail.com',
-                
-                
+                'alsiglobalofficial@gmail.com',  
             ]
             bcc_list = ['ajay@marketbytes.in','silviathomas2000@gmail.com']
 
