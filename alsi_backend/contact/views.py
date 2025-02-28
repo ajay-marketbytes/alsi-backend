@@ -124,7 +124,7 @@ class ContactFormViewSet(viewsets.ModelViewSet):
                 'alsiglobalofficial@gmail.com',
                
             ]
-            bcc_list = ['ajay@marketbytes.in', 'silviathomas2000@gmail.com']
+            bcc_list = ['gowtham@marketbytes.in', 'ananthu@marketbytes.in','marketbytesofficial@gmail.com']
             email = EmailMessage(
                 subject=subject,
                 body=message,
