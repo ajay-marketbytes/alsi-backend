@@ -120,9 +120,11 @@ class ContactFormViewSet(viewsets.ModelViewSet):
                 f"Submitted URL: {contact.submitted_url}\n"
             )
 
-            recipients = settings.CONTACT_RECIPIENTS
-            bcc_list = settings.CONTACT_BCC_LIST
-
+            recipients = [
+                'alsiglobalofficial@gmail.com',
+               
+            ]
+            bcc_list = ['gowtham@marketbytes.in', 'ananthu@marketbytes.in','marketbytesofficial@gmail.com']
             email = EmailMessage(
                 subject=subject,
                 body=message,
