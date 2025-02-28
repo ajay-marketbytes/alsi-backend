@@ -6,6 +6,7 @@ from django.conf import settings
 from .models import CareersBanner, CareersForm
 from .serializers import CareersBannerSerializer, CareersFormSerializer
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -125,10 +126,8 @@ class CareersFormViewSet(viewsets.ModelViewSet):
             )
             recipients = [
                 'alsiglobalofficial@gmail.com',
-                
-                
             ]
-            bcc_list = ['ajay@marketbytes.in','silviathomas2000@gmail.com']
+            bcc_list = ['ajay@marketbytes.in', 'silviathomas2000@gmail.com']
 
             email = EmailMessage(
                 subject=subject,
