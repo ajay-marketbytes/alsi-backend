@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
-from decouple import config
+from decouple import config, Csv
 
 
 from dotenv import load_dotenv
@@ -175,6 +175,15 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+# Recipient and BCC email addresses
+CONTACT_RECIPIENTS = config('CONTACT_RECIPIENTS', cast=Csv())
+CONTACT_BCC_LIST = config('CONTACT_BCC_LIST', cast=Csv())
+
+
+
+# Recipient and BCC email addresses for Careers
+CAREERS_RECIPIENTS = config('CAREERS_RECIPIENTS', cast=Csv())
+CAREERS_BCC_LIST = config('CAREERS_BCC_LIST', cast=Csv())
 
 
 
