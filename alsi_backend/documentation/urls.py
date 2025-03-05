@@ -5,7 +5,7 @@ from rest_framework import permissions
 
 schema_view_instance = get_schema_view(
     openapi.Info(
-        title="CMS ALSI Global LLc Documentation",
+        title="CMS ALSI Global LLC Documentation",
         default_version='v1',
         description="API documentation for ALSI",
     ),
