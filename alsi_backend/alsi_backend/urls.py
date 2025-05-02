@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import robots_txt, sitemap_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,7 +35,8 @@ urlpatterns = [
     path('api/careers/', include('careers.urls')),
     path('api/gallery/', include('gallery.urls')),
     path("api/network/", include('our_network.urls')),
-    #documentation_swagger
+    path('robots.txt', robots_txt, name='robots_txt'),
+    path('sitemap.xml', sitemap_view, name='sitemap'),
     path('documentation/', include('documentation.urls'))
 ] 
 

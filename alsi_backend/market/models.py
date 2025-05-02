@@ -5,7 +5,8 @@ class BlogBanner(models.Model):
     title = models.CharField(max_length=255)
     image = models.ImageField(upload_to='blog_banner/', null=True, blank=True)
     blog_url = models.CharField(max_length=1000)
-
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.title
 

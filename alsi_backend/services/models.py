@@ -14,7 +14,8 @@ class Services(models.Model):
     link_url = models.CharField(max_length=255, null=True, blank=True)
     banner_image = models.ImageField(upload_to='services/')
     content_paragraphs = models.TextField(null=True, blank=True)
-
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.title
 
@@ -47,7 +48,8 @@ class SpecializedService(models.Model):
     dedicated_image = models.ImageField(upload_to='services/')
     dedicated_paragraph = models.TextField(null=True, blank=True)
     link_url = models.CharField(max_length=255, null=True, blank=True)
-
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.description if self.description else "No description"
 
